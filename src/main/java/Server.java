@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    final static Integer THREAD_COUNT = 25;
+    final static Integer THREAD_COUNT = 64;
 
     final static List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
 
