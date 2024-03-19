@@ -50,6 +50,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        threadPool.shutdown();
     }
 
     private void processConnection(BufferedReader in, BufferedOutputStream out) throws IOException {
