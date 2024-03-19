@@ -1,3 +1,6 @@
+import handler.Handler;
+import handler.Request;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +9,11 @@ import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,9 +22,17 @@ public class Server {
 
     final static List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
 
-    public void start() {
+    final static Map<Map<String, String>, Handler> handlers = new ConcurrentHashMap<>();
+
+    public void addHandler(String methodType, String path, Handler handler) {
+        Map<String, String> key = new HashMap<>();
+        key.put(methodType, path);
+        handlers.put(key, handler);
+    }
+
+    public void start(Integer port) {
         final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
-        try (final var serverSocket = new ServerSocket(9999)) {
+        try (final var serverSocket = new ServerSocket(port)) {
             Runnable logic = () -> {
                 try (
                         final var socket = serverSocket.accept();
@@ -45,6 +60,14 @@ public class Server {
 
         if (parts.length != 3) {
             // just close socket
+            return;
+        }
+
+        Request request = new Request(parts[0], "", ""); //Что передавать в headers и body?
+        var key = new HashMap<>().put(parts[0], parts[1]);
+        if (handlers.containsKey(key)) {
+            Handler handler = handlers.get(key);
+            handler.handle(request, out);
             return;
         }
 
