@@ -65,7 +65,6 @@ public class Server {
         if (handlers.containsKey(request)) {
             Handler handler = handlers.get(request);
             handler.handle(request, out);
-            return;
         }
 
         final var path = parts[1];
