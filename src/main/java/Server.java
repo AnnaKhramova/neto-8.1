@@ -22,12 +22,11 @@ public class Server {
 
     final static List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
 
-    final static Map<Map<String, String>, Handler> handlers = new ConcurrentHashMap<>();
+    final static Map<Request, Handler> handlers = new ConcurrentHashMap<>();
 
     public void addHandler(String methodType, String path, Handler handler) {
-        Map<String, String> key = new HashMap<>();
-        key.put(methodType, path);
-        handlers.put(key, handler);
+        Request request = new Request(methodType, path);
+        handlers.put(request, handler);
     }
 
     public void start(Integer port) {
@@ -64,10 +63,9 @@ public class Server {
             return;
         }
 
-        Request request = new Request(parts[0], "", ""); //Что передавать в headers и body?
-        var key = new HashMap<>().put(parts[0], parts[1]);
-        if (handlers.containsKey(key)) {
-            Handler handler = handlers.get(key);
+        Request request = new Request(parts[0], parts[1]);
+        if (handlers.containsKey(request)) {
+            Handler handler = handlers.get(request);
             handler.handle(request, out);
             return;
         }

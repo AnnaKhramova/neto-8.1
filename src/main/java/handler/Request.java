@@ -2,12 +2,10 @@ package handler;
 
 public class Request {
     String method;
-    String headers;
-    String body;
+    String path;
 
-    public Request(String method, String headers, String body) {
+    public Request(String method, String path) {
         this.method = method;
-        this.headers = headers;
-        this.body = body;
+        this.path = path;
     }
 }
